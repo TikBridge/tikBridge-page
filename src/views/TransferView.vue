@@ -28,7 +28,7 @@ import ChainSelect from '../components/ChainSelect.vue'
 <script>
 import { FlashOutline } from '@vicons/ionicons5'
 import { defineComponent } from "vue";
-import { ethers } from 'ethers'
+import { ethers, parseEther } from "ethers";
 import { NCard, NIcon, NDivider,NDialogProvider, NMessageProvider, NButton, NInput } from 'naive-ui'
 import { toRaw } from 'vue'
 export default defineComponent({
@@ -88,7 +88,8 @@ export default defineComponent({
       console.log(prvd.getNetwork())
       const signer = await prvd.getSigner()
       const contract = new ethers.Contract(this.mos[this.fromChain], this.abi, signer)
-      await contract.transferOutToken(this.token[this.fromChain], this.toAddress, parseInt(this.amount), parseInt(this.toChain))
+      const amount = parseEther(this.amount)
+      await contract.transferOutToken(this.token[this.fromChain], this.toAddress, amount, parseInt(this.toChain))
 
     },
     handleChainID(chainID) {
