@@ -1,45 +1,36 @@
 <script setup>
 import ChainSelect from '../components/ChainSelect.vue'
+
 </script>
 <template>
-    <n-card size="huge" class="transferCard" embedded hoverable title="tikBridge">
-      <n-message-provider>
-        <n-dialog-provider>
+    <el-card size="huge" class="transferCard" embedded hoverable title="tikBridge">
         <ChainSelect @child-event="handleChainID" />
-        </n-dialog-provider>
-      </n-message-provider>
-      <n-divider />
-      <n-input v-model:value="amount" placeholder="amount">
+      <el-divider />
+      <el-input v-model="amount" placeholder="amount">
         <template #prefix>
-          <n-icon :component="FlashOutline" />
+          <el-icon :component="FlashOutline" />
         </template>
-      </n-input>
-      <n-divider />
-      <n-input v-model:value="toAddress" placeholder="to">
+      </el-input>
+      <el-divider />
+      <el-input v-model="toAddress" placeholder="to">
         <template #prefix>
-          <n-icon :component="FlashOutline" />
+          <el-icon :component="FlashOutline" />
         </template>
-      </n-input>
-      <n-divider />
-      <n-button @click="transfer" type="info"> Transfer </n-button>
-    </n-card>
+      </el-input>
+      <el-divider />
+        <el-button @click="transfer" type="info"> Transfer </el-button>
+        <el-button @click="open" type="info"> Transfer </el-button>
+    </el-card>
 </template>
 
 <script>
 import { FlashOutline } from '@vicons/ionicons5'
 import { defineComponent } from "vue";
-import { ethers } from 'ethers'
-import { NCard, NIcon, NDivider,NDialogProvider, NMessageProvider, NButton, NInput } from 'naive-ui'
+import { ethers, parseEther } from "ethers";
+import {ElMessage} from "element-plus";
 import { toRaw } from 'vue'
 export default defineComponent({
   components: {
-    NCard,
-    NIcon,
-    NInput,
-    NButton,
-    NDivider,
-    NMessageProvider,
-    NDialogProvider
 
   },
   beforeMount() {
@@ -60,11 +51,13 @@ export default defineComponent({
   },
   setup() {
     return {
-      FlashOutline
+      FlashOutline,
     }
   },
-
   methods: {
+    open() {
+      ElMessage('thisaaaa')
+    },
     async connWallet() {
         let provider;
         if (typeof window.ethereum == 'undefined') {
@@ -84,14 +77,31 @@ export default defineComponent({
         }
       },
     async transfer() {
+      console.log(this.toChain)
+      console.log(this.toAddress)
       const prvd = toRaw(this.provider)
-      console.log(prvd.getNetwork())
       const signer = await prvd.getSigner()
-      const contract = new ethers.Contract(this.mos[this.fromChain], this.abi, signer)
-      await contract.transferOutToken(this.token[this.fromChain], this.toAddress, parseInt(this.amount), parseInt(this.toChain))
+      try{
+        const amount = parseEther(this.amount)
+        console.log(amount)
+
+        const contract = new ethers.Contract(this.mos[this.fromChain], this.abi, signer)
+        await contract.transferOutToken(this.token[this.fromChain], this.toAddress, amount, parseInt(this.toChain))
+
+      }catch (error) {
+        console.log(error['message'])
+        if (error['message'].includes("balance too low")) {
+          window.$message.error("balance too low")
+        } else if (error["message"].includes("value must be a string")){
+          console.log(error)
+          // window.$message.error("please input a right value")
+
+        }
+      }
 
     },
     handleChainID(chainID) {
+      console.log(chainID)
       this.fromChain = chainID["fromChain"]
       this.toChain = chainID["toChain"]
     }

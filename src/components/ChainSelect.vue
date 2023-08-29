@@ -1,32 +1,40 @@
 <template>
-  <n-space vertical>
-    <n-tag :bordered="false">FromChain</n-tag>
-    <n-select
-      v-model:value="fromChain"
+  <el-space vertical>
+    <el-tag :bordered="false">FromChain</el-tag>
+    <el-select
+      v-model="fromChain"
       placeholder="From Chain" :options="options"
-      @update:value="switchChain()"
-    />
-    <n-tag :bordered="false">ToChain</n-tag>
-    <n-select
-      v-model:value="toChain"
+      @change="switchChain()"
+    >
+      <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
+    </el-select>
+    <el-tag :bordered="false">ToChain</el-tag>
+    <el-select
+      v-model="toChain"
       placeholder="To Chain" :options="options"
-      @update:value="emitValue"
+      @change="emitValue"
+    >
+    <el-option
+      v-for="item in options"
+      :key="item.value"
+      :label="item.label"
+      :value="item.value"
     />
-  </n-space>
+    </el-select>
+  </el-space>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
-import { NSelect, NSpace, NTag, useMessage, useDialog } from 'naive-ui'
 export default defineComponent({
   components: {
-    NSelect,
-    NSpace,
-    NTag
   },
   setup () {
-    const message = useMessage()
-    const dialog = useDialog()
     return {
       fromChain: ref(null),
       toChain: ref(null),
@@ -44,9 +52,6 @@ export default defineComponent({
           value: 50001
         }
       ],
-      handleError (context) {
-        message.error(context)
-      }
     }
   },
   methods: {
@@ -84,7 +89,6 @@ export default defineComponent({
   }
 })
 </script>
-
 <style scoped>
 
 </style>
