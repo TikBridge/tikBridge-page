@@ -20,7 +20,7 @@ import TokenSelect from "@/components/TokenSelect.vue";
 
     <el-divider />
     <div class="transbtn">
-      <el-button @click="openApprovedialog" disabled type="primary" center> Approve </el-button>
+      <el-button @click="openApprovedialog" type="primary" center> Approve </el-button>
       <el-button @click="openTransferdialog" type="primary" center> Transfer </el-button>
     </div>
   </el-card>
@@ -50,7 +50,7 @@ import TokenSelect from "@/components/TokenSelect.vue";
   </el-dialog>
   <el-dialog
     v-model="dialogApprove"
-    title="TransferInfo"
+    title="ApproveInfo"
     width="40%"
     center
   >
@@ -58,15 +58,15 @@ import TokenSelect from "@/components/TokenSelect.vue";
     <el-divider />
     <p>token: {{token}}</p>
     <el-divider />
-    <p>Your Address: {{amount}}</p>
+    <p>Your Address: {{fromAddress}}</p>
     <el-divider />
-    <p>Approve To: {{toAddress}}</p>
+    <p>Approve To: {{mos[fromChain]}}</p>
     <el-divider />
-    <p>Amount: {{toAddress}}</p>
+    <p>Amount: {{amount}}</p>
     <template #footer>
       <span class="dialog-footer">
         <el-button @click="closeApprovedialog">Cancel</el-button>
-        <el-button type="primary" @click="transfer">
+        <el-button type="primary" @click="approveamount">
           Send
         </el-button>
       </span>
@@ -91,7 +91,6 @@ export default defineComponent({
   },
   data() {
     return {
-      buttonText: 'Connect Wallet',
       mos:{ "97": "0x889e2959cf02eB3d5d854d3B3b93f73D8EE18878", "50001": "0x3d8d602D3628EfEfE95a4d47f89518453D0833ce", "80001": "0x2b7C560F4fC5B43d4Fa3aAC556f0FBf8500f6594"},
       provider: ethers.BrowserProvider,
       abi: [
@@ -103,6 +102,7 @@ export default defineComponent({
       toChain: null,
       fromChain: null,
       token: null,
+      fromAddress: null,
       tokens:{
         "97": [{label: "BBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}, {label: "BBT", value: "0xB2d3834396f65dbFbD390dE47c17111204341F71"}],
         "50001": [{label: "TTC", value: "0xCC7A077aE8A32B7BDA8e7e6150198061a8530CA1"}, {label: "MBBT", value: "0x78EE0f0D791BC943d0AEcc46b391CF8E33c0b494"}],
@@ -148,7 +148,23 @@ export default defineComponent({
     closeApprovedialog() {
       this.dialogApprove = false
     },
-    openApprovedialog() {
+    async openApprovedialog() {
+      const prvd = toRaw(this.provider)
+      const signer = await prvd.getSigner()
+      const fromAddress = await signer.getAddress()
+      this.fromAddress = fromAddress.toString()
+      if (this.fromChain === '0' || this.fromChain === null ) {
+        ElMessage.warning('please choose a from chain');
+        return
+      }
+      if (this.token === null ) {
+        ElMessage.warning('please choose a transfer token');
+        return;
+      }
+      if (!checkInputValue(this.amount)) {
+        ElMessage.warning('please input a legal to value and can not be 0');
+        return;
+      }
       this.dialogApprove = true
     },
     async connWallet() {
@@ -162,7 +178,6 @@ export default defineComponent({
             const cid = await provider.send("eth_chainId");
             if (cid !== undefined) {
               this.provider = provider
-              this.buttonText = "Connect";
             }
           } catch (error) {
             ElMessage.error("connect wallet error")
@@ -196,6 +211,29 @@ export default defineComponent({
         }
       }
       this.closeTransferdialog()
+
+    },
+    async approveamount() {
+      const prvd = toRaw(this.provider)
+      const signer = await prvd.getSigner()
+      try{
+        const amount = parseEther(this.amount)
+        const contract = new ethers.Contract(this.token, this.abi, signer)
+        await contract.approve(this.mos[this.fromChain], amount)
+      }catch (error) {
+        if (error['message'].includes("balance too low")) {
+          ElMessage.error("balance too low")
+        } else if (error["message"].includes("value must be a string")){
+          ElMessage.error("please input a right value")
+        }else if (error['message'].includes("invalid value for Contract target")) {
+          ElMessage.error('invalid argument')
+        }else if (error['message'].includes("token not registered")) {
+          ElMessage.error("token not registered")
+        }else {
+          console.log(error)
+        }
+      }
+      this.closeApprovedialog()
 
     },
     handleChainID(chainID) {
