@@ -2,7 +2,7 @@
   <el-space vertical>
     <el-select
       v-model="tokenAddress"
-      placeholder="Token Address" :options="$attrs.childProp"
+      placeholder="Token" :options="$attrs.childProp"
       @change="tokenValue"
     >
       <el-option
