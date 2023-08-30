@@ -67,9 +67,9 @@ export default defineComponent({
       showTransferInfo: ref(false),
       token: null,
       tokens:{
-        "97": [{label: "BBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}, {label: "USDT", value: "0x876a651153A56C2e04CA88920E16F33076E38466"}],
-        "50001": [{lable: "XBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}],
-        "80001": [{lable: "TBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}]
+        "97": [{label: "BBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}, {label: "BBT", value: "0xB2d3834396f65dbFbD390dE47c17111204341F71"}],
+        "50001": [{label: "TTC", value: "0xCC7A077aE8A32B7BDA8e7e6150198061a8530CA1"}, {label: "MBBT", value: "0x78EE0f0D791BC943d0AEcc46b391CF8E33c0b494\n"}],
+        "80001": [{label: "TBC", value: "0x876a651153A56C2e04CA88920E16F33076E38466"}, {label: "RBBT", value: "0x571eC3D07e3b44dc9576bc56BBBc903E6Df7e7dF\n"}]
       },
       selectTokens: null
     }
