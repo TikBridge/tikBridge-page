@@ -1,37 +1,55 @@
 <script setup>
 import ChainSelect from '../components/ChainSelect.vue'
-
+import TokenSelect from "@/components/TokenSelect.vue";
 </script>
 <template>
-    <el-card size="huge" class="transferCard" embedded hoverable title="tikBridge">
-        <ChainSelect @child-event="handleChainID" />
-      <el-divider />
-      <el-input v-model="amount" placeholder="amount">
-        <template #prefix>
-          <el-icon :component="FlashOutline" />
-        </template>
-      </el-input>
-      <el-divider />
-      <el-input v-model="toAddress" placeholder="to">
-        <template #prefix>
-          <el-icon :component="FlashOutline" />
-        </template>
-      </el-input>
-      <el-divider />
-        <el-button @click="transfer" type="info"> Transfer </el-button>
-        <el-button @click="open" type="info"> Transfer </el-button>
-    </el-card>
+  <el-card size="huge" class="transferCard" embedded hoverable title="tikBridge">
+      <ChainSelect @child-event="handleChainID" />
+    <el-divider />
+    <TokenSelect :childProp="this.selectTokens" @child-event="getTokenAddress"/>
+    <el-divider />
+    <el-input v-model="amount" placeholder="amount" />
+    <el-divider />
+    <el-input v-model="toAddress" placeholder="to" />
+    <el-divider />
+      <el-button @click="this.showTransferInfo = true" type="info"> Transfer </el-button>
+  </el-card>
+  <el-dialog
+    v-model="showTransferInfo"
+    title="TransferInfo"
+    width="40%"
+    center
+  >
+    <p>FromChain: {{this.fromChain}}</p>
+    <el-divider />
+    <p>ToChain: {{this.toChain}}</p>
+    <el-divider />
+    <p>token: {{this.token}}</p>
+    <el-divider />
+    <p>Amount: {{this.amount}}</p>
+    <el-divider />
+    <p>toAddress: {{this.toAddress}}</p>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="this.showTransferInfo = false">Cancel</el-button>
+        <el-button type="primary" @click="this.transfer">
+          Send
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
 
 <script>
+import 'element-plus/es/components/message/style/css'
 import { FlashOutline } from '@vicons/ionicons5'
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { ethers, parseEther } from "ethers";
-import {ElMessage} from "element-plus";
 import { toRaw } from 'vue'
+import { ElMessage } from "element-plus";
+
 export default defineComponent({
   components: {
-
   },
   beforeMount() {
     this.connWallet();
@@ -46,18 +64,24 @@ export default defineComponent({
       toAddress: null,
       toChain: null,
       fromChain: null,
-      token:{"97": "0x86b2315743b687aaD996E08d66AF02A63b82A4C9", '50001': "0xCC7A077aE8A32B7BDA8e7e6150198061a8530CA1", '80001': '0x876a651153A56C2e04CA88920E16F33076E38466'}
+      showTransferInfo: ref(false),
+      token: null,
+      tokens:{
+        "97": [{label: "BBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}, {label: "USDT", value: "0x876a651153A56C2e04CA88920E16F33076E38466"}],
+        "50001": [{lable: "XBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}],
+        "80001": [{lable: "TBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}]
+      },
+      selectTokens: null
     }
   },
   setup() {
     return {
       FlashOutline,
+      dialogVisible: ref(false)
     }
   },
   methods: {
-    open() {
-      ElMessage('thisaaaa')
-    },
+
     async connWallet() {
         let provider;
         if (typeof window.ethereum == 'undefined') {
@@ -72,41 +96,48 @@ export default defineComponent({
               this.buttonText = "Connect";
             }
           } catch (error) {
+            ElMessage.error("connect wallet error")
             console.log("error: ", error)
           }
         }
       },
     async transfer() {
-      console.log(this.toChain)
-      console.log(this.toAddress)
       const prvd = toRaw(this.provider)
       const signer = await prvd.getSigner()
       try{
         const amount = parseEther(this.amount)
-        console.log(amount)
-
+        console.log("fromChain: ", this.fromChain)
+        console.log("toChain: ", this.toChain)
+        console.log("token: ", this.token)
+        console.log("amount: ", amount)
+        console.log("to: ", this.toAddress)
         const contract = new ethers.Contract(this.mos[this.fromChain], this.abi, signer)
-        await contract.transferOutToken(this.token[this.fromChain], this.toAddress, amount, parseInt(this.toChain))
-
+        await contract.transferOutToken(this.token, this.toAddress, amount, parseInt(this.toChain))
       }catch (error) {
-        console.log(error['message'])
         if (error['message'].includes("balance too low")) {
-          window.$message.error("balance too low")
+          ElMessage.error("balance too low")
         } else if (error["message"].includes("value must be a string")){
+          ElMessage.error("please input a right value")
+        }else if (error['message'].includes("invalid value for Contract target")) {
+          ElMessage.error('invalid argument')
+        }else if (error['message'].includes("token not registered")) {
+          ElMessage.error("token not registered")
+        }else {
           console.log(error)
-          // window.$message.error("please input a right value")
-
         }
       }
+      this.showTransferInfo = false
 
     },
     handleChainID(chainID) {
-      console.log(chainID)
       this.fromChain = chainID["fromChain"]
       this.toChain = chainID["toChain"]
+      this.selectTokens = this.tokens[this.fromChain]
+    },
+    getTokenAddress(tokenAddress) {
+      this.token = tokenAddress
     }
   }
-
 })
 </script>
 

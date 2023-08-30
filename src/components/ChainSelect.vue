@@ -31,6 +31,7 @@
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue'
+import { ElMessage } from 'element-plus'
 export default defineComponent({
   components: {
   },
@@ -66,7 +67,7 @@ export default defineComponent({
         if (error['code'] == 4902) {
           this.addChain(this.fromChain)
         }else {
-          console.error('switch to the network error:', error);
+          ElMessage.error('switch to the network error:', error);
         }
       }
 
@@ -79,7 +80,7 @@ export default defineComponent({
         })
       }catch (error) {
         if (error['code'] == -32602) {
-          this.handleError("try to add network error, rpcurl must is a https url")
+          ElMessage.error("try to add network error, Please add it manually")
         }
       }
     },
