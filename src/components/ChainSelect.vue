@@ -64,13 +64,16 @@ export default defineComponent({
         })
         console.log('switched to the network: ', this.fromChain);
       }catch (error) {
+        this.fromChain = null
         if (error['code'] == 4902) {
           this.addChain(this.fromChain)
-        }else {
+        }else if (error['code'] === 4001){
+          ElMessage.warning("User reject checkout network")
+        } else {
           ElMessage.error('switch to the network error:', error);
         }
       }
-
+      this.emitValue()
     },
     async addChain(chainID) {
       try{
@@ -85,7 +88,15 @@ export default defineComponent({
       }
     },
     emitValue() {
-      this.$emit('child-event', {"fromChain": this.fromChain.toString(), "toChain": this.toChain.toString()})
+      let fromChain = 0
+      let toChain = 0
+      if (this.fromChain !== null ) {
+        fromChain = this.fromChain
+      }
+      if (this.toChain !== null ) {
+        toChain =  this.toChain
+      }
+      this.$emit('child-event', {"fromChain": fromChain.toString(), "toChain": toChain.toString()})
     }
   }
 })

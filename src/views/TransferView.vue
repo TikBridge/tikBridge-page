@@ -81,6 +81,7 @@ import { defineComponent, ref } from "vue";
 import { ethers, parseEther } from "ethers";
 import { toRaw } from 'vue'
 import { ElMessage } from "element-plus";
+import { checkInputValue, isAddress } from "@/utils/utils";
 
 export default defineComponent({
   components: {
@@ -122,10 +123,29 @@ export default defineComponent({
       this.dialogVisible = false
     },
     openTransferdialog() {
+      if (this.fromChain === '0' || this.fromChain === null ) {
+        ElMessage.warning('please choose a from chain');
+        return
+      }
+      if (this.toChain === '0' || this.toChain === null) {
+        ElMessage.warning('please choose a to chain');
+        return;
+      }
+      if (this.token === null ) {
+        ElMessage.warning('please choose a transfer token');
+        return;
+      }
+      if (this.toAddress=== null || !isAddress(this.toAddress)) {
+        ElMessage.warning('please input a legal to address');
+        return;
+      }
+      if (!checkInputValue(this.amount)) {
+        ElMessage.warning('please input a legal to value and can not be 0');
+        return;
+      }
       this.dialogVisible = true
     },
     closeApprovedialog() {
-
       this.dialogApprove = false
     },
     openApprovedialog() {
@@ -175,7 +195,7 @@ export default defineComponent({
           console.log(error)
         }
       }
-      this.closedialog()
+      this.closeTransferdialog()
 
     },
     handleChainID(chainID) {
