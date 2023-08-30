@@ -45,7 +45,7 @@ export default defineComponent({
           value: 97
         },
         {
-          label: 'X-Relay TestNet',
+          label: 'T-Relay TestNet',
           value: 80001
         },
         {

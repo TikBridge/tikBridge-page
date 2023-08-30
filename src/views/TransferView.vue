@@ -20,28 +20,28 @@ import TokenSelect from "@/components/TokenSelect.vue";
 
     <el-divider />
     <div class="transbtn">
-      <el-button @click="this.showTransferInfo = true" type="primary" center> Transfer </el-button>
+      <el-button @click="opendialog" type="primary" center> Transfer </el-button>
     </div>
   </el-card>
   <el-dialog
-    v-model="showTransferInfo"
+    v-model="dialogVisible"
     title="TransferInfo"
     width="40%"
     center
   >
-    <p>FromChain: {{this.fromChain}}</p>
+    <p>FromChain: {{fromChain}}</p>
     <el-divider />
-    <p>ToChain: {{this.toChain}}</p>
+    <p>ToChain: {{toChain}}</p>
     <el-divider />
-    <p>token: {{this.token}}</p>
+    <p>token: {{token}}</p>
     <el-divider />
-    <p>Amount: {{this.amount}}</p>
+    <p>Amount: {{amount}}</p>
     <el-divider />
-    <p>toAddress: {{this.toAddress}}</p>
+    <p>toAddress: {{toAddress}}</p>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="this.showTransferInfo = false">Cancel</el-button>
-        <el-button type="primary" @click="this.transfer">
+        <el-button @click="closedialog">Cancel</el-button>
+        <el-button type="primary" @click="transfer">
           Send
         </el-button>
       </span>
@@ -73,24 +73,28 @@ export default defineComponent({
       toAddress: null,
       toChain: null,
       fromChain: null,
-      showTransferInfo: ref(false),
       token: null,
       tokens:{
         "97": [{label: "BBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}, {label: "BBT", value: "0xB2d3834396f65dbFbD390dE47c17111204341F71"}],
-        "50001": [{label: "TTC", value: "0xCC7A077aE8A32B7BDA8e7e6150198061a8530CA1"}, {label: "MBBT", value: "0x78EE0f0D791BC943d0AEcc46b391CF8E33c0b494\n"}],
-        "80001": [{label: "TBC", value: "0x876a651153A56C2e04CA88920E16F33076E38466"}, {label: "RBBT", value: "0x571eC3D07e3b44dc9576bc56BBBc903E6Df7e7dF\n"}]
+        "50001": [{label: "TTC", value: "0xCC7A077aE8A32B7BDA8e7e6150198061a8530CA1"}, {label: "MBBT", value: "0x78EE0f0D791BC943d0AEcc46b391CF8E33c0b494"}],
+        "80001": [{label: "TBC", value: "0x876a651153A56C2e04CA88920E16F33076E38466"}, {label: "RBBT", value: "0x571eC3D07e3b44dc9576bc56BBBc903E6Df7e7dF"}]
       },
+      dialogVisible: ref(false),
       selectTokens: []
     }
   },
   setup() {
     return {
       FlashOutline,
-      dialogVisible: ref(false)
     }
   },
   methods: {
-
+    closedialog() {
+      this.dialogVisible = false
+    },
+    opendialog() {
+      this.dialogVisible = true
+    },
     async connWallet() {
         let provider;
         if (typeof window.ethereum == 'undefined') {
@@ -135,7 +139,7 @@ export default defineComponent({
           console.log(error)
         }
       }
-      this.showTransferInfo = false
+      this.closedialog()
 
     },
     handleChainID(chainID) {

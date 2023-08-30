@@ -10,9 +10,6 @@ export default defineComponent({
 
 <template>
   <header>
-    <router-link to="/transfer">
-      <el-button type="info">transfer</el-button>
-    </router-link>
   </header>
 </template>
 
@@ -26,7 +23,13 @@ header {
   top: 0;
   left: 0;
 }
+.button-container {
+  display: flex;
+}
 
+.button-link {
+  margin-right: 10px;
+}
 </style>
 <script setup>
 </script>
