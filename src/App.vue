@@ -20,7 +20,6 @@ import TheFooter from "./components/TheFooter.vue";
 body {
 }
 .main{
-  background-color: #EDF0F9;
   margin-top: 60px;
   display: flex;
   justify-content: center;

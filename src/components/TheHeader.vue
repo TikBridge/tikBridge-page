@@ -1,11 +1,9 @@
 <script>
 import { defineComponent } from "vue";
-import {NButton} from 'naive-ui'
 export default defineComponent({
   name: 'TheHeader',
   setup(){},
   components: {
-    NButton
   }
 })
 </script>
@@ -13,7 +11,7 @@ export default defineComponent({
 <template>
   <header>
     <router-link to="/transfer">
-      <n-button type="info">transfer</n-button>
+      <el-button type="info">transfer</el-button>
     </router-link>
   </header>
 </template>

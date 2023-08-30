@@ -4,13 +4,13 @@
   <div>
     <p>Powered by TikBridge</p>
     <router-link to="/">
-      <n-icon size="40" :component="HomeSharp"/>
+<!--      <n-icon size="40" :component="HomeSharp"/>-->
     </router-link>
     <a href=""></a>
-    <n-icon size="40" :component="LogoTwitter"/>
-    <n-icon size="40" :component="DocumentText"/>
+<!--    <n-icon size="40" :component="LogoTwitter"/>-->
+<!--    <n-icon size="40" :component="DocumentText"/>-->
 
-    <n-icon size="40" :component="LogoGithub"/>
+<!--    <n-icon size="40" :component="LogoGithub"/>-->
   </div>
 </footer>
 </template>
@@ -18,12 +18,10 @@
 <script>
 import { defineComponent } from "vue";
 import { LogoTwitter,HomeSharp,DocumentText, LogoGithub } from '@vicons/ionicons5'
-import { NIcon } from 'naive-ui'
 
 export default defineComponent({
   name: 'TheFooter',
   components: {
-    NIcon
   },
   setup(){
     return {
