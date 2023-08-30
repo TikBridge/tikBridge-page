@@ -6,7 +6,7 @@ import TokenSelect from "@/components/TokenSelect.vue";
   <el-card size="huge" class="transferCard" embedded hoverable title="tikBridge">
       <ChainSelect @child-event="handleChainID" />
     <el-divider />
-    <TokenSelect :childProp="this.selectTokens" @child-event="getTokenAddress"/>
+    <TokenSelect :childProp="selectTokens" @child-event="getTokenAddress"/>
     <el-divider />
     <el-input v-model="amount" placeholder="amount" />
     <el-divider />
@@ -71,7 +71,7 @@ export default defineComponent({
         "50001": [{label: "TTC", value: "0xCC7A077aE8A32B7BDA8e7e6150198061a8530CA1"}, {label: "MBBT", value: "0x78EE0f0D791BC943d0AEcc46b391CF8E33c0b494\n"}],
         "80001": [{label: "TBC", value: "0x876a651153A56C2e04CA88920E16F33076E38466"}, {label: "RBBT", value: "0x571eC3D07e3b44dc9576bc56BBBc903E6Df7e7dF\n"}]
       },
-      selectTokens: null
+      selectTokens: []
     }
   },
   setup() {
