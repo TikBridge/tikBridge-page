@@ -20,7 +20,8 @@ import TokenSelect from "@/components/TokenSelect.vue";
 
     <el-divider />
     <div class="transbtn">
-      <el-button @click="opendialog" type="primary" center> Transfer </el-button>
+      <el-button @click="openApprovedialog" disabled type="primary" center> Approve </el-button>
+      <el-button @click="openTransferdialog" type="primary" center> Transfer </el-button>
     </div>
   </el-card>
   <el-dialog
@@ -40,7 +41,31 @@ import TokenSelect from "@/components/TokenSelect.vue";
     <p>toAddress: {{toAddress}}</p>
     <template #footer>
       <span class="dialog-footer">
-        <el-button @click="closedialog">Cancel</el-button>
+        <el-button @click="closeTransferdialog">Cancel</el-button>
+        <el-button type="primary" @click="transfer">
+          Send
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
+  <el-dialog
+    v-model="dialogApprove"
+    title="TransferInfo"
+    width="40%"
+    center
+  >
+    <p>ChainID: {{fromChain}}</p>
+    <el-divider />
+    <p>token: {{token}}</p>
+    <el-divider />
+    <p>Your Address: {{amount}}</p>
+    <el-divider />
+    <p>Approve To: {{toAddress}}</p>
+    <el-divider />
+    <p>Amount: {{toAddress}}</p>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="closeApprovedialog">Cancel</el-button>
         <el-button type="primary" @click="transfer">
           Send
         </el-button>
@@ -68,7 +93,10 @@ export default defineComponent({
       buttonText: 'Connect Wallet',
       mos:{ "97": "0x889e2959cf02eB3d5d854d3B3b93f73D8EE18878", "50001": "0x3d8d602D3628EfEfE95a4d47f89518453D0833ce", "80001": "0x2b7C560F4fC5B43d4Fa3aAC556f0FBf8500f6594"},
       provider: ethers.BrowserProvider,
-      abi: [{"inputs":[{"internalType":"address","name":"_token","type":"address"},{"internalType":"bytes","name":"_to","type":"bytes"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_toChain","type":"uint256"}],"name":"transferOutToken","outputs":[],"stateMutability":"nonpayable","type":"function"}],
+      abi: [
+        {"inputs":[{"internalType":"address","name":"_token","type":"address"},{"internalType":"bytes","name":"_to","type":"bytes"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_toChain","type":"uint256"}],"name":"transferOutToken","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"}
+      ],
       amount: null,
       toAddress: null,
       toChain: null,
@@ -80,6 +108,7 @@ export default defineComponent({
         "80001": [{label: "TBC", value: "0x876a651153A56C2e04CA88920E16F33076E38466"}, {label: "RBBT", value: "0x571eC3D07e3b44dc9576bc56BBBc903E6Df7e7dF"}]
       },
       dialogVisible: ref(false),
+      dialogApprove: ref(false),
       selectTokens: []
     }
   },
@@ -89,11 +118,18 @@ export default defineComponent({
     }
   },
   methods: {
-    closedialog() {
+    closeTransferdialog() {
       this.dialogVisible = false
     },
-    opendialog() {
+    openTransferdialog() {
       this.dialogVisible = true
+    },
+    closeApprovedialog() {
+
+      this.dialogApprove = false
+    },
+    openApprovedialog() {
+      this.dialogApprove = true
     },
     async connWallet() {
         let provider;
