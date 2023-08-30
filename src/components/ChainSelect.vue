@@ -45,10 +45,6 @@ export default defineComponent({
           value: 97
         },
         {
-          label: 'T-Relay TestNet',
-          value: 80001
-        },
-        {
           label: 'TKM TestNet',
           value: 50001
         }

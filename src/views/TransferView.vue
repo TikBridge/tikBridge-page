@@ -91,7 +91,7 @@ export default defineComponent({
   },
   data() {
     return {
-      mos:{ "97": "0x889e2959cf02eB3d5d854d3B3b93f73D8EE18878", "50001": "0x3d8d602D3628EfEfE95a4d47f89518453D0833ce", "80001": "0x2b7C560F4fC5B43d4Fa3aAC556f0FBf8500f6594"},
+      mos:{ "97": "0x889e2959cf02eB3d5d854d3B3b93f73D8EE18878", "50001": "0x3d8d602D3628EfEfE95a4d47f89518453D0833ce"},
       provider: ethers.BrowserProvider,
       abi: [
         {"inputs":[{"internalType":"address","name":"_token","type":"address"},{"internalType":"bytes","name":"_to","type":"bytes"},{"internalType":"uint256","name":"_amount","type":"uint256"},{"internalType":"uint256","name":"_toChain","type":"uint256"}],"name":"transferOutToken","outputs":[],"stateMutability":"nonpayable","type":"function"},
@@ -106,7 +106,6 @@ export default defineComponent({
       tokens:{
         "97": [{label: "BBC", value: "0x86b2315743b687aaD996E08d66AF02A63b82A4C9"}, {label: "BBT", value: "0xB2d3834396f65dbFbD390dE47c17111204341F71"}],
         "50001": [{label: "TTC", value: "0xCC7A077aE8A32B7BDA8e7e6150198061a8530CA1"}, {label: "MBBT", value: "0x78EE0f0D791BC943d0AEcc46b391CF8E33c0b494"}],
-        "80001": [{label: "TBC", value: "0x876a651153A56C2e04CA88920E16F33076E38466"}, {label: "RBBT", value: "0x571eC3D07e3b44dc9576bc56BBBc903E6Df7e7dF"}]
       },
       dialogVisible: ref(false),
       dialogApprove: ref(false),
