@@ -8,11 +8,20 @@ import TokenSelect from "@/components/TokenSelect.vue";
     <el-divider />
     <TokenSelect :childProp="selectTokens" @child-event="getTokenAddress"/>
     <el-divider />
+    <div class="tag-input-row">
+    <el-tag :bordered="false" >Amount</el-tag>
     <el-input v-model="amount" placeholder="amount" />
+    </div>
     <el-divider />
-    <el-input v-model="toAddress" placeholder="to" />
+    <div class="tag-input-row">
+      <el-tag :bordered="false" >ToAddress</el-tag>
+      <el-input v-model="toAddress" placeholder="to" />
+    </div>
+
     <el-divider />
-      <el-button @click="this.showTransferInfo = true" type="info"> Transfer </el-button>
+    <div class="transbtn">
+      <el-button @click="this.showTransferInfo = true" type="primary" center> Transfer </el-button>
+    </div>
   </el-card>
   <el-dialog
     v-model="showTransferInfo"
@@ -150,6 +159,15 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
   }
-
+  .tag-input-row {
+    display: flex;
+    align-items: center;
+  }
+  .tag-input-row .el-tag {
+    margin-right: 10px;
+  }
+  .transbtn {
+    text-align: center;
+  }
 }
 </style>

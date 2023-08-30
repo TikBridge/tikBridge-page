@@ -1,5 +1,6 @@
 <template>
   <el-space vertical>
+    <el-tag :bordered="false">Token</el-tag>
     <el-select
       v-model="tokenAddress"
       placeholder="Token" :options="$attrs.childProp"
