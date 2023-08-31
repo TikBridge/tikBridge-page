@@ -3,7 +3,8 @@
     <el-tag :bordered="false">FromChain</el-tag>
     <el-select
       v-model="fromChain"
-      placeholder="From Chain" :options="options"
+      placeholder="From Chain"
+      :options="options"
       @change="switchChain()"
     >
       <el-option
@@ -14,23 +15,19 @@
       />
     </el-select>
     <el-tag :bordered="false">ToChain</el-tag>
-    <el-select
-      v-model="toChain"
-      placeholder="To Chain" :options="options"
-      @change="emitValue"
-    >
-    <el-option
-      v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
-    />
+    <el-select v-model="toChain" placeholder="To Chain" :options="options" @change="emitValue">
+      <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value"
+      />
     </el-select>
   </el-space>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, toRaw } from 'vue'
 import { ElMessage } from 'element-plus'
 export default defineComponent({
   components: {
@@ -41,7 +38,7 @@ export default defineComponent({
       toChain: ref(null),
       options: [
         {
-          label: 'BSC TestNet',
+          label: 'BNB TestNet',
           value: 97
         },
         {
@@ -51,18 +48,29 @@ export default defineComponent({
       ],
     }
   },
+  data () {
+    return {
+      chaininfo: {
+        97: {chainId: '0x61', chainName: "BNB TestNet", rpcUrls: ["https://bsc-testnet.publicnode.com"], nativeCurrency: {name: "tBNB", symbol: 'tBNB', decimals: 18}, blockExplorerUrls: ["https://testnet.bscscan.com/"], iconUrls: ["https://raw.githubusercontent.com/MetaMask/eth-contract-metadata/main/images/0x094616f0bdfb0b526bd735bf66eca0ad254ca81f/logo.png", "https://raw.githubusercontent.com/MetaMask/eth-contract-metadata/main/images/0x094616f0bdfb0b526bd735bf66eca0ad254ca81f/logo_large.png"]},
+        50001: {chainId: '0xc351', chainName: "TKM TestNet", rpcUrls: ["http://43.247.184.48:32021"], nativeCurrency: {name: "TKM", symbol: 'TKM', decimals: 18}, blockExplorerUrls: [], iconUrls: []}
+      }
+    }
+
+  },
   methods: {
     async switchChain() {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
-          params: [{ chainId: `0x${this.fromChain.toString(16)}` }],
+          params: [{ chainId: this.chaininfo[this.fromChain].chainId}],
         })
         console.log('switched to the network: ', this.fromChain);
       }catch (error) {
+        const chainid = this.fromChain
         this.fromChain = null
-        if (error['code'] == 4902) {
-          this.addChain(this.fromChain)
+        console.log(error['message'])
+        if (error['message'].includes("Try adding the chain")) {
+          await this.addChain(chainid)
         }else if (error['code'] === 4001){
           ElMessage.warning("User reject checkout network")
         } else {
@@ -72,13 +80,17 @@ export default defineComponent({
       this.emitValue()
     },
     async addChain(chainID) {
-      try{
+      try {
+        const chaininfo = toRaw(this.chaininfo[chainID])
+        console.log(chaininfo)
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
-          params: [{ chainId: `0x${chainID.toString(16)}`, chainName: 'X-Relay', rpcUrls: ['http://54.213.26.209:32016'] }],
+          params: [chaininfo],
         })
-      }catch (error) {
+        this.fromChain = chainID
+      } catch (error) {
         if (error['code'] == -32602) {
+          console.log(error['message'])
           ElMessage.error("try to add network error, Please add it manually")
         }
       }
@@ -97,6 +109,4 @@ export default defineComponent({
   }
 })
 </script>
-<style scoped>
-
-</style>
+<style scoped></style>
