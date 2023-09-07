@@ -38,6 +38,10 @@ export default defineComponent({
       toChain: ref(null),
       options: [
         {
+          label: 'Goerli',
+          value: 5
+        },
+        {
           label: 'BNB TestNet',
           value: 97
         },
@@ -51,6 +55,7 @@ export default defineComponent({
   data () {
     return {
       chaininfo: {
+        5: {chainId: '0x5', chainName: "Goerli", rpcUrls: ["https://rpc.ankr.com/eth_goerli"], nativeCurrency: {name: "ETH", symbol: 'ETH', decimals: 18}, blockExplorerUrls: ["https://goerli.etherscan.io"], iconUrls: []},
         97: {chainId: '0x61', chainName: "BNB TestNet", rpcUrls: ["https://bsc-testnet.publicnode.com"], nativeCurrency: {name: "tBNB", symbol: 'tBNB', decimals: 18}, blockExplorerUrls: ["https://testnet.bscscan.com/"], iconUrls: ["https://raw.githubusercontent.com/MetaMask/eth-contract-metadata/main/images/0x094616f0bdfb0b526bd735bf66eca0ad254ca81f/logo.png", "https://raw.githubusercontent.com/MetaMask/eth-contract-metadata/main/images/0x094616f0bdfb0b526bd735bf66eca0ad254ca81f/logo_large.png"]},
         50001: {chainId: '0xc351', chainName: "TKM TestNet", rpcUrls: ["http://43.247.184.48:32021"], nativeCurrency: {name: "TKM", symbol: 'TKM', decimals: 18}, blockExplorerUrls: [], iconUrls: []}
       }

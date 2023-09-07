@@ -20,7 +20,7 @@ import TheFooter from "./components/TheFooter.vue";
 body {
 }
 .main{
-  margin-top: 60px;
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
